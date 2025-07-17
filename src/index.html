@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Weather Forecast Website" />
+    <meta
+      name="keywords"
+      content="HTML CSS JavaScript React Python Project Web Development Weather Forecast Temperature Humidity Wind"
+    />
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      href="../images/favicon.png"
+      type="image/x-icon"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link href="./output.css" rel="stylesheet" />
+    <title>Weather ForeCast</title>
+  </head>
+  <body class="bg-blue-200">
+    <!-- Heading Start -->
+    <header
+      class="bg-blue-400 text-center text-white shadow-md shadow-blue-500/50 sticky top-0"
+    >
+      <h1 class="text-3xl font-bold py-4 font-protest text-shadow-lg/20">
+        Weather Dashboard
+      </h1>
+    </header>
+    <!-- Heading End -->
+
+    <main>
+      
+      <div
+        class="max-w-2xl lg:max-w-lvw grid lg:grid-cols-[25%_74%] lg:gap-1 md:mx-auto mt-4"
+      >
+        <!-- Search Section -->
+        <section
+          class="bg-white rounded-md shadow-md lg:ml-0.5 shadow-gray-400/50 p-4 space-y-4 lg:row-span-2"
+        >
+          <!-- City Search -->
+          <div class="flex flex-col items-center gap-4">
+            <label
+              class="font-bold text-xl text-shadow-blue-300 text-shadow-lg/50 text-blue-500"
+              for="cityInput"
+              >Enter a City Name</label
+            >
+            <input
+              type="text"
+              name="city"
+              id="cityInput"
+              placeholder="Enter a City Name"
+              class="flex-1 border border-gray-300 rounded-md px-4 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:shadow-md focus:shadow-blue-400/50"
+            />
+            <button
+              class="pt-0.5 bg-blue-300 pb-0.5 px-3 py-3 rounded text-gray-700 text-xl font-serif hover:animate-slideUp font-bold shadow-md shadow-blue-600/50"
+            >
+              Search
+            </button>
+
+            <button
+              class="bg-green-400 rounded-md text-gray-700 font-bold font-serif text-xl pt-0.5 pb-0.5 px-1.5 py-1.5 shadow-md shadow-green-800/50"
+            >
+              <i
+                class="fa-solid fa-location-dot hover:animate-bounce text-green-600 p-2.5 text-shadow-green-900 text-shadow-lg"
+              ></i
+              >Use Current Location
+            </button>
+          </div>
+          <!-- Recently Searched Dropdown (Initially Hidden) -->
+          <div id="recentDropdown" class="relative hidden">
+            <select
+              id="recentCities"
+              class="w-full p-2 border border-blue-400 rounded-lg bg-gray-50"
+            >
+              <option value="">Select Cities</option>
+              <!-- option will be add through Javascript -->
+            </select>
+          </div>
+        </section>
+        <!-- Search Section End -->
+        
+        <!-- Weather Display Placeholder Start -->
+        <section
+          id="weatherDisplay"
+          class="mt-6 lg:mt-0 p-4 bg-white rounded-md shadow-md shadow-gray-400/50"
+        >
+          <!-- Weather Card Start -->
+          <div id="weatherCard" class="lg:flex lg:gap-2.5">
+            <!-- Weather Icon -->
+            <div>
+              <img
+                id="weatherIcon"
+                src="../images/weatherIcon.png"
+                alt="Weather Icon"
+                class="mx-auto w-24 h-24 mb-1.5"
+              />
+            </div>
+            <!-- Weather Icon End -->
+
+            <!-- City Name Start -->
+            <div
+              class="bg-blue-300 rounded-md text-gray-700 max-md:hover:animate-bounce-scale lg:hover:animate-wiggle lg:flex-1/2"
+            >
+              <h2 id="cityName" class="text-2xl font-bold pt-1 pl-1.5">
+                City Name
+              </h2>
+              <p id="currentDate" class="pt-1 pb-1 pl-1.5">Date</p>
+            </div>
+            <!-- City Name End -->
+
+            <!-- Temperature Start-->
+            <div
+              class="bg-blue-100 mt-2 rounded-md text-blue-800 hover:animate-bounce-scale"
+            >
+              <p class="font-semibold pt-1 pl-1.5 lg:px-1">Temperature</p>
+              <p id="temperature" class="flex text-xl pt-1 pl-1.5 pb-1">
+                -- °C
+                <img
+                  id="temperatureIcon"
+                  src="../images/temperature.png"
+                  alt="Weather Icon"
+                  class="w-10 h-8 mb-1.5 pl-1"
+                />
+              </p>
+            </div>
+
+            <!-- Temmperature End -->
+
+            <!-- Wind start  -->
+            <div
+              class="bg-yellow-100 rounded-md mt-2 text-yellow-600 hover:animate-bounce-scale"
+            >
+              <p class="font-semibold pt-1 pl-1.5">Wind Speed</p>
+              <p id="windSpeed" class="flex text-xl pt-1 pl-1.5 pb-1">
+                -- m/s
+                <img
+                  id="windIcon"
+                  src="../images/wind.png"
+                  alt="Weather Icon"
+                  class="w-10 h-8 mb-1.5 pl-1"
+                />
+              </p>
+            </div>
+            <!-- Wind End -->
+            <!-- Humidity -->
+            <div
+              class="bg-green-100 mt-2 rounded-md shadow text-green-900 hover:animate-bounce-scale px-2"
+            >
+              <p class="font-semibold pt-1 pl-1">Humidity</p>
+              <p id="humidity" class="flex text-xl pt-1 pb-1 pl-1">
+                -- %
+                <img
+                  id="humidity"
+                  src="../images/humidity.png"
+                  alt="Weather Icon"
+                  class="w-10 h-8 mb-1.5 pl-1"
+                />
+              </p>
+            </div>
+            <!-- Humidity End -->
+          </div>
+          <!-- Weather Card End -->
+        </section>
+        <!-- Weather Display PlaceHolder End -->
+
+        <!-- 5 Days Forecast End -->
+        <section
+          class="mt-6 lg:mt-0 p-4 bg-white rounded-md shadow-md shadow-gray-400/50"
+        >
+          <h2 class="text-2xl font-bold text-gray-600 font-spicy">
+            5-Days Forecast
+          </h2>
+
+          <!-- Weather Forecast Cards Start-->
+          <div id="forecastCards" class="lg:flex lg:gap-1">
+            <!-- Weather Forecast Card  Start-->
+            <div
+              id="forestCard"
+              class="bg-gray-200 rounded-lg hover:animate-wiggle"
+            >
+              <!-- Date -->
+              <div class="mt-2 text-gray-700">
+                <h2 class="px-2 text-2xl font-bold">Date</h2>
+              </div>
+              <!-- Date End -->
+              <!-- Temperature Start -->
+              <div class="mt-2 text-blue-800 hover:animate-bounce flex lg:pr-3">
+                <p class="font-semibold pt-1 pl-1.5">Temperature</p>
+                <p
+                  id="foreCasttemperature"
+                  class="flex text-xl pt-1 pl-1.5 pb-1 lg:p-0"
+                >
+                  100 °C
+                  <img
+                    id="forecasttemperatureIcon"
+                    src="../images/temperature.png"
+                    alt="Weather Icon"
+                    class="w-10 h-8 mb-1.5 pl-1"
+                  />
+                </p>
+              </div>
+              <!-- Wind start  -->
+              <div
+                class="mt-2 text-yellow-600 hover:animate-bounce flex lg:pr-3"
+              >
+                <p class="font-semibold pt-1 pl-1.5">Wind Speed</p>
+                <p id="forecastwindSpeed" class="flex text-xl pt-1 pl-1.5 pb-1">
+                  -- m/s
+                  <img
+                    id="forecastwindIcon"
+                    src="../images/wind.png"
+                    alt="Weather Icon"
+                    class="w-10 h-8 mb-1.5 pl-1"
+                  />
+                </p>
+              </div>
+              <!-- Wind End -->
+              <!-- Humidity Start-->
+              <div class="mt-2 text-green-900 hover:animate-bounce px-2 flex">
+                <p class="font-semibold pt-1 pl-1">Humidity</p>
+                <p id="forecasthumidity" class="flex text-xl pt-1 pb-1 pl-1">
+                  -- %
+                  <img
+                    id="forecasthumidity"
+                    src="../images/humidity.png"
+                    alt="Weather Icon"
+                    class="w-10 h-8 mb-1.5 pl-1"
+                  />
+                </p>
+              </div>
+              <!-- Humidity End -->
+            </div>
+            <!-- Weather Forecast Card End -->
+          </div>
+          <!-- Weather Forecast Cards End -->
+        </section>
+
+        <!-- 5 Days Forecast End -->
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Kablammo&family=Protest+Revolution&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rowdies:wght@300;400;700&family=Spicy+Rice&display=swap");
+
+@import "tailwindcss";
+
+
+@theme {
+  --font-protest: "Protest Revolution", "sans-serif";
+  --font-cursive: "Cedarville Cursive", "sans-serif";
+  --font-roboto: "Roboto", "sans-serif";
+  --font-spicy: "Spicy Rice", "sans-serif";
+  --font-kablammo: "Kablammo", "cursive";
+  --font-rowdies: "Rowdies", sans-serif;
+
+
+  --animate-wiggle: wiggle 1s ease-in-out infinite;
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(-3deg);
+    }
+    50% {
+      transform: rotate(3deg);
+    }
+  }
+
+  --animate-fadeSlide: fadeSlide 0.8s ease-out both;
+  @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        
+      }
+    }
+
+    --animate-slideUp:slideUp 1s ease-in;
+     @keyframes slideUp {
+    0% {
+      transform: translateY(5px);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1.5;
+    }
+  }
+
+  --animate-bounce-scale:bounce-scale 1s ease-in;
+  @keyframes bounce-scale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+}
+
