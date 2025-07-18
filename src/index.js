@@ -5,7 +5,7 @@ const searchCity = document.querySelector("#citySearch");
 const button = document.querySelector("#currentLocation");
 
 let recentSearch = JSON.parse(localStorage.getItem("recentCities")) || [];
-console.log(recentSearch);
+
 
 let hasAddOption = false;
 
@@ -92,6 +92,16 @@ function addOptions() {
     count += 1;
     recentCities.appendChild(option);
   });
+}
+
+recentCities.addEventListener('change',addCityDrop)
+
+/*Add current location from drop down*/
+async function addCityDrop(){
+  const city=this.value;
+  const data=await fetchCurrentWeather(city);
+  renderCurrentData(data)
+  
 }
 
 /** Utility Function */
