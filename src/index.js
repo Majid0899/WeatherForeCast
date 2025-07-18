@@ -4,6 +4,11 @@ const searchCity = document.querySelector("#citySearch");
 
 const button = document.querySelector("#currentLocation");
 
+let recentSearch = JSON.parse(localStorage.getItem("recentCities")) || [];
+console.log(recentSearch);
+
+let hasAddOption = false;
+
 /**
  * Fetch the current weather
  * return an object with details
@@ -35,16 +40,28 @@ searchCity.addEventListener("click", addCityData);
 
 /*Add Search City Data */
 async function addCityData() {
-  const city = document.querySelector("#cityInput").value;
-
-  if (!city) {
+  const city = document.querySelector("#cityInput").value.trim();
+  if (!validateLocation(city)) {
     document.querySelector("#inputError").classList.remove("hidden");
   } else {
     document.querySelector("#inputError").classList.add("hidden");
+    document.querySelector("#location-info").classList.add("hidden");
+    document.querySelector("#recentDropdown").classList.remove("hidden");
+
+    //check if city is exist or not
+    if (!recentSearch.includes(city)) {
+      recentSearch.unshift(city);
+    }
 
     const data = await fetchCurrentWeather(city);
 
     renderCurrentData(data);
+    saveToLocalStorage();
+
+    if (!hasAddOption) {
+      addOptions();
+      hasAddOption = true;
+    }
   }
 }
 
@@ -59,6 +76,22 @@ function addCurrentLocation() {
     document.getElementById("location-info").innerText =
       "Geolocation is not supported by this browser.";
   }
+}
+
+/*Drop Down Menu */
+const recentCities = document.querySelector("#recentCities");
+
+/*Add options in drop down  */
+function addOptions() {
+  let count = 1;
+  recentSearch.forEach((cities) => {
+    if (count > 5) return;
+    const option = document.createElement("option");
+    option.value = `${cities}`;
+    option.innerText = `${cities}`;
+    count += 1;
+    recentCities.appendChild(option);
+  });
 }
 
 /** Utility Function */
@@ -82,7 +115,6 @@ async function showPosition(position) {
     date: response.location.localtime.split(" ")[0],
   };
 
-  
   renderCurrentData(data);
 }
 
@@ -105,7 +137,7 @@ function showError(error) {
       break;
   }
   document.getElementById("location-info").innerHTML = "Error: " + message;
-  document.getElementById("location-info").classList.remove("hidden")
+  document.getElementById("location-info").classList.remove("hidden");
 }
 
 /* Render Data in Current Weather Dashboard */
@@ -125,4 +157,22 @@ function renderCurrentData(data) {
 
   // Humidity
   document.querySelector("#humidity").innerText = `${data.humidity} %`;
+}
+
+function validateLocation(location) {
+  const locationRegex = /^[a-zA-Z\s]+$/;
+  if (!location.trim()) {
+    document.querySelector("#inputError").innerText = "City cannot be empty.";
+    return false;
+  }
+  if (!locationRegex.test(location)) {
+    document.querySelector("#inputError").innerText =
+      "Invalid City. Only letters and spaces are allowed.";
+    return false;
+  }
+  return true;
+}
+
+function saveToLocalStorage() {
+  localStorage.setItem("recentCities", JSON.stringify(recentSearch));
 }
