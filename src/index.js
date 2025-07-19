@@ -8,6 +8,7 @@ let recentSearch = JSON.parse(localStorage.getItem("recentCities")) || [];
 
 let hasAddOption = false;
 
+let isSearchEmpty = true;
 /**
  * Fetch the current weather
  * return an object with details
@@ -27,8 +28,9 @@ async function fetchCurrentWeather(city) {
     const wind = res.current.wind_mph;
     const humidity = res.current.humidity;
     const date = res.location.localtime.split(" ")[0];
+    const condition = res.current.condition.text.toLowerCase();
 
-    return { country, date, temp, wind, humidity, city };
+    return { country, date, temp, wind, humidity, city, condition };
   } catch (error) {
     console.log("Data not fetched", error);
   }
@@ -55,7 +57,7 @@ async function fetchForecastWeather(city) {
       const temp = forecast.day.avgtemp_c;
       const wind = forecast.day.maxwind_mph;
       const humidity = forecast.day.avghumidity;
-      const condition = forecast.day.condition.text;
+      const condition = forecast.day.condition.text.toLowerCase();
       return { date, temp, wind, humidity, condition };
     });
     return weather_data;
@@ -76,6 +78,7 @@ async function addCityData() {
     document.querySelector("#inputError").classList.add("hidden");
     document.querySelector("#location-info").classList.add("hidden");
     document.querySelector("#recentDropdown").classList.remove("hidden");
+    isSearchEmpty = false;
 
     //check if city is exist or not
     if (!recentSearch.includes(city)) {
@@ -91,6 +94,7 @@ async function addCityData() {
       addOptions();
       hasAddOption = true;
     }
+    document.querySelector("#cityInput").value=''
   }
 }
 
@@ -99,7 +103,6 @@ searchCity.addEventListener("click", addForecastData);
 
 /*Add Forecast city data */
 async function addForecastData() {
-  console.log("Forecast");
   const city = document.querySelector("#cityInput").value.trim();
   if (!validateLocation(city)) {
     document.querySelector("#inputError").classList.remove("hidden");
@@ -108,7 +111,6 @@ async function addForecastData() {
 
     const data = await fetchForecastWeather(city);
 
-    console.log(data);
     renderForeCastData(data);
   }
 }
@@ -148,13 +150,19 @@ recentCities.addEventListener("change", addCityDrop);
 async function addCityDrop() {
   const city = this.value;
   const data = await fetchCurrentWeather(city);
+  const forecast_data = await fetchForecastWeather(city);
   renderCurrentData(data);
+  renderForeCastData(forecast_data);
 }
 
 /** Utility Function */
 
 /*Handle Current Position */
 async function showPosition(position) {
+  if (isSearchEmpty) {
+    document.querySelector("#inputError").classList.add("hidden");
+  }
+
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
 
@@ -170,9 +178,11 @@ async function showPosition(position) {
     wind: response.current.wind_kph,
     humidity: response.current.humidity,
     date: response.location.localtime.split(" ")[0],
+    condition: response.current.condition.text.toLowerCase(),
   };
-  recentSearch.unshift(data.city);
-
+  if (!recentSearch.includes(data.city)) {
+    recentSearch.unshift(data.city);
+  }
 
   const url_forecast = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${latitude},${longitude}&days=6&aqi=no&alerts=no`;
 
@@ -186,7 +196,7 @@ async function showPosition(position) {
     const temp = forecast.day.avgtemp_c;
     const wind = forecast.day.maxwind_mph;
     const humidity = forecast.day.avghumidity;
-    const condition = forecast.day.condition.text;
+    const condition = forecast.day.condition.text.toLowerCase();
     return { date, temp, wind, humidity, condition };
   });
 
@@ -216,11 +226,12 @@ function showError(error) {
   document.getElementById("location-info").classList.remove("hidden");
 }
 
-/* Render Data in Current Weather Dashboard
-
-
-*/
+/* Render Data in Current Weather Dashboard*/
 function renderCurrentData(data) {
+  // Sets the weather icon
+  const condition = setWeatherIcon(data.condition);
+  document.querySelector("#weatherIcon").src = `../images/${condition}.png`;
+
   // CityName
   document.querySelector(
     "#cityName"
@@ -238,24 +249,48 @@ function renderCurrentData(data) {
   document.querySelector("#humidity").innerText = `${data.humidity} %`;
 }
 
+function setWeatherIcon(condition) {
+  if (condition.includes("cloud")) {
+    return "cloudy";
+  } else if (condition.includes("rain") || condition.includes("thunder")) {
+    return "rainy";
+  } else if (condition.includes("clear") || condition.includes("sunny")) {
+    return "sunny";
+  } else if (condition.includes("mist")) {
+    return "Mist";
+  } else {
+    return "weatherIcon";
+  }
+}
+
 /*Render Forecast in weather Dasboard */
 function renderForeCastData(forecasts) {
   let cards = document.querySelector("#forecastCards");
 
-  console.log(cards);
   cards.innerText = "";
 
   forecasts.forEach((forecast) => {
     const card = document.createElement("div");
     card.classList.add("bg-gray-200", "rounded-lg", "hover:animate-wiggle");
+    const condition = setWeatherIcon(forecast.condition);
     card.innerHTML = `
-  
     <!-- Weather Forecast Card  Start-->
               <!-- Date -->
               <div class="mt-2 text-gray-700">
                 <h2 class="px-2 text-2xl font-bold">${forecast.date}</h2>
               </div>
               <!-- Date End -->
+
+                <!-- Weather Icon -->
+              <div>
+              <img
+                id="forecastweatherIcon"
+                src="../images/${condition}.png"
+                alt="Weather Icon"
+                class="mx-2 w-24 h-24 mb-1.5"
+              />
+            </div>
+              <!-- Weather Icon End -->
 
               <!-- Temperature Start -->
               <div class="mt-2 text-blue-800 hover:animate-bounce flex lg:pr-3">
@@ -307,6 +342,7 @@ function renderForeCastData(forecasts) {
             <!-- Weather Forecast Card End -->
 `;
     cards.append(card);
+    setWeatherIcon(forecast.condition);
   });
 }
 
