@@ -158,9 +158,9 @@ async function showPosition(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
 
-  const url = `https://api.weatherapi.com/v1/current.json?key=e62155e758624e4ca64130036251607&q=${latitude},${longitude}&aqi=no`;
+  const url_current = `https://api.weatherapi.com/v1/current.json?key=e62155e758624e4ca64130036251607&q=${latitude},${longitude}&aqi=no`;
 
-  const res = await fetch(url);
+  const res = await fetch(url_current);
   const response = await res.json();
 
   const data = {
@@ -171,8 +171,28 @@ async function showPosition(position) {
     humidity: response.current.humidity,
     date: response.location.localtime.split(" ")[0],
   };
+  recentSearch.unshift(data.city);
 
+
+  const url_forecast = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${latitude},${longitude}&days=6&aqi=no&alerts=no`;
+
+  const res_forecast = await fetch(url_forecast);
+  const response_forecast = await res_forecast.json();
+  const forecasts = response_forecast.forecast.forecastday;
+  forecasts.shift(0);
+
+  const weather_data = forecasts.map((forecast) => {
+    const date = forecast.date;
+    const temp = forecast.day.avgtemp_c;
+    const wind = forecast.day.maxwind_mph;
+    const humidity = forecast.day.avghumidity;
+    const condition = forecast.day.condition.text;
+    return { date, temp, wind, humidity, condition };
+  });
+
+  renderForeCastData(weather_data);
   renderCurrentData(data);
+  saveToLocalStorage();
 }
 
 /* Handle Current Position Error*/
@@ -196,7 +216,10 @@ function showError(error) {
   document.getElementById("location-info").classList.remove("hidden");
 }
 
-/* Render Data in Current Weather Dashboard */
+/* Render Data in Current Weather Dashboard
+
+
+*/
 function renderCurrentData(data) {
   // CityName
   document.querySelector(
@@ -221,8 +244,6 @@ function renderForeCastData(forecasts) {
 
   console.log(cards);
   cards.innerText = "";
-
-  
 
   forecasts.forEach((forecast) => {
     const card = document.createElement("div");
